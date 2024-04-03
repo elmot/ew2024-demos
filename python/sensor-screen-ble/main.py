@@ -2,6 +2,10 @@ import time
 from pimoroni_i2c import PimoroniI2C
 from breakout_sgp30 import BreakoutSGP30
 from gfx_pack import GfxPack, SWITCH_A
+from ble_co2 import BLETemperature
+from ble_advertising import advertising_payload,decode_services,decode_name
+import bluetooth
+import random
 
 
 # sets up a handy function we can call to clear the screen
@@ -72,6 +76,20 @@ sgp30.start_measurement(False)
 s_id = sgp30.get_unique_id()
 print("Started measuring for id 0x", '{:04x}'.format(s_id[0]), '{:04x}'.format(s_id[1]), '{:04x}'.format(s_id[2]), sep="")
 
+ble = bluetooth.BLE()
+temp = BLETemperature(ble)
+
+payload = advertising_payload(
+    name="micropython",
+    services=[bluetooth.UUID(0x181A), bluetooth.UUID("6E400001-B5A3-F393-E0A9-E50E24DCCA9E")],
+)
+print(payload)
+print(decode_name(payload))
+print(decode_services(payload))
+
+t = 25
+ti = 0
+
 j = 0
 while True:
     if gp.switch_pressed(SWITCH_A):
@@ -132,4 +150,14 @@ while True:
     display.text(f"TVOC {TVOC:.0f}ppm", WIDTH - text_width, 16, scale=1)
 
     display.update()
+
+    # Write BLE every second, notify every 10 seconds.
+    ti = (ti + 1) % 10
+    temp.set_temperature(t, notify=ti == 0, indicate=False)
+    # Random walk the temperature.
+    t += random.uniform(-0.5, 0.5)
+
     time.sleep(1.0)
+
+
+
