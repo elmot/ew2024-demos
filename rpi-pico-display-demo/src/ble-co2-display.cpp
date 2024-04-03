@@ -17,7 +17,7 @@
 
 #define LED_QUICK_FLASH_DELAY_MS 100
 #define LED_SLOW_FLASH_DELAY_MS 1000
-
+#define ORG_BLUETOOTH_CHARACTERISTIC_CO2_CONCENTRATION (0x2B8C)
 typedef enum {
     TC_OFF,
     TC_IDLE,
@@ -95,7 +95,7 @@ static void handle_gatt_client_event([[maybe_unused]]uint8_t packet_type,[[maybe
                     // service query complete, look for characteristic
                     state = TC_W4_CHARACTERISTIC_RESULT;
                     DEBUG_LOG("Search for env sensing characteristic.\n");
-                    gatt_client_discover_characteristics_for_service_by_uuid16(handle_gatt_client_event, connection_handle, &server_service, ORG_BLUETOOTH_CHARACTERISTIC_TEMPERATURE);
+                    gatt_client_discover_characteristics_for_service_by_uuid16(handle_gatt_client_event, connection_handle, &server_service, ORG_BLUETOOTH_CHARACTERISTIC_CO2_CONCENTRATION);
                     break;
                 default:
                     break;
@@ -145,8 +145,11 @@ static void handle_gatt_client_event([[maybe_unused]]uint8_t packet_type,[[maybe
                     const uint8_t *value = gatt_event_notification_get_value(packet);
                     DEBUG_LOG("Indication value len %d\n", value_length);
                     if (value_length == 2) {
-                        float temp = little_endian_read_16(value, 0);
-                        printf("read temp %.2f degc\n", temp / 100);
+                        uint32_t co2_ppm = little_endian_read_16(value, 0);
+                        printf("read co2 %li ppm\n", co2_ppm);
+                    } else if (value_length == 4) {
+                        uint32_t co2_ppm = little_endian_read_32(value, 0);
+                        printf("read co2 %li degc\n", co2_ppm);
                     } else {
                         printf("Unexpected length %d\n", value_length);
                     }
