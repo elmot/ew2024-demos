@@ -1,5 +1,3 @@
-# This example demonstrates a simple temperature sensor peripheral.
-#
 # The sensor's local value updates every second, and it will notify
 # any connected central every 10 seconds.
 
@@ -32,24 +30,34 @@ _TEMP_CHAR = (
     bluetooth.UUID(0x2A6E),
     _FLAG_READ | _FLAG_NOTIFY | _FLAG_INDICATE,
 )
-_ENV_SENSE_SERVICE = (
+_CO2_CHAR = (
+    bluetooth.UUID(0x2B8D),
+    _FLAG_READ | _FLAG_NOTIFY | _FLAG_INDICATE,
+)
+_ENV_TEMP_SENSE_SERVICE = (
     _ENV_SENSE_UUID,
     (_TEMP_CHAR,),
 )
 
+_ENV_CO2_SENSE_SERVICE = (
+    _ENV_SENSE_UUID,
+    (_CO2_CHAR,),
+)
+
 # org.bluetooth.characteristic.gap.appearance.xml
 _ADV_APPEARANCE_GENERIC_THERMOMETER = const(768)
+_ADV_APPEARANCE_GENERIC_ENV_SENSOR = const(5696)
 
 
-class BLETemperature:
+class BLEEnvironment:
     def __init__(self, ble, name="mpy-temp"):
         self._ble = ble
         self._ble.active(True)
         self._ble.irq(self._irq)
-        ((self._handle,),) = self._ble.gatts_register_services((_ENV_SENSE_SERVICE,))
+        ((self._handle,),) = self._ble.gatts_register_services((_ENV_CO2_SENSE_SERVICE,))
         self._connections = set()
         self._payload = advertising_payload(
-            name=name, services=[_ENV_SENSE_UUID], appearance=_ADV_APPEARANCE_GENERIC_THERMOMETER
+            name=name, services=[_ENV_SENSE_UUID], appearance=_ADV_APPEARANCE_GENERIC_ENV_SENSOR
         )
         self._advertise()
 
@@ -66,7 +74,7 @@ class BLETemperature:
         elif event == _IRQ_GATTS_INDICATE_DONE:
             conn_handle, value_handle, status = data
 
-    def set_temperature(self, temp_deg_c, notify=False, indicate=False):
+    def set_data(self, temp_deg_c, notify=False, indicate=False):
         # Data is sint16 in degrees Celsius with a resolution of 0.01 degrees Celsius.
         # Write the local value, ready for a central to read.
         self._ble.gatts_write(self._handle, struct.pack("<h", int(temp_deg_c * 100)))
@@ -85,7 +93,7 @@ class BLETemperature:
 
 def demo():
     ble = bluetooth.BLE()
-    temp = BLETemperature(ble)
+    temp = BLEEnvironment(ble)
 
     t = 25
     i = 0
@@ -93,7 +101,7 @@ def demo():
     while True:
         # Write every second, notify every 10 seconds.
         i = (i + 1) % 10
-        temp.set_temperature(t, notify=i == 0, indicate=False)
+        temp.set_data(t, notify=i == 0, indicate=False)
         # Random walk the temperature.
         t += random.uniform(-0.5, 0.5)
         time.sleep_ms(1000)
