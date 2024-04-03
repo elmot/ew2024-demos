@@ -23,15 +23,28 @@ set(OUTPUT_NAME rpi_pico_display_demo)
 include_directories(${PIMORONI_PICO_PATH})
 list(APPEND CMAKE_MODULE_PATH ${PIMORONI_PICO_PATH})
 
-add_executable(${OUTPUT_NAME} ble-co2-display.cpp)
-#add_executable(${OUTPUT_NAME} demo.cpp)
 add_subdirectory(${PIMORONI_PICO_PATH}/common ${CMAKE_CURRENT_BINARY_DIR}/pimoroni-common)
 add_subdirectory(${PIMORONI_PICO_PATH}/drivers ${CMAKE_CURRENT_BINARY_DIR}/pimoroni-drivers)
 add_subdirectory(${PIMORONI_PICO_PATH}/libraries ${CMAKE_CURRENT_BINARY_DIR}/pimoroni-libraries)
 
+
+add_executable(${OUTPUT_NAME} src/ble-co2-display.cpp)
+#add_executable(${OUTPUT_NAME} demo.cpp)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    pico_enable_stdio_uart(${OUTPUT_NAME} 0)
+    pico_enable_stdio_semihosting(${OUTPUT_NAME} 1)
+else()
+    pico_enable_stdio_uart(${OUTPUT_NAME} 1)
+    pico_enable_stdio_semihosting(${OUTPUT_NAME} 0)
+endif()
+
+target_include_directories(${OUTPUT_NAME} PRIVATE src)
+target_compile_definitions(${OUTPUT_NAME} PRIVATE RUNNING_AS_CLIENT=1)
+
 # Pull in pico libraries that we need
 target_link_libraries(${OUTPUT_NAME}
         pico_stdlib
+        pico_stdio_uart
         hardware_spi
         hardware_pwm
         hardware_dma
@@ -40,11 +53,12 @@ target_link_libraries(${OUTPUT_NAME}
         st7789
         pico_graphics
         rgbled
-#        button
-#        pico_multicore
+        #        button
+        #        pico_multicore
 
-#        pico_btstack_ble
-#        pico_btstack_cyw43
+        pico_btstack_ble
+        pico_btstack_cyw43
+        pico_cyw43_arch_none
 
 )
 

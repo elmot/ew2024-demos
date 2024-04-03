@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="rpi_pico_display_demo" type="com.jetbrains.cidr.embedded.customgdbserver.type" factoryName="com.jetbrains.cidr.embedded.customgdbserver.factory" nameIsGenerated="true" PROGRAM_PARAMS="-f openocd-debug.cfg -s &quot;d:\sdks\Pico SDK v1.5.0\openocd\scripts&quot;" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="rpi_pico_display_demo" TARGET_NAME="rpi_pico_display_demo" CONFIG_NAME="Debug-MinGW PICO-SDK" version="1" RUN_TARGET_PROJECT_NAME="rpi_pico_display_demo" RUN_TARGET_NAME="rpi_pico_display_demo">
+    <custom-gdb-server version="1" gdb-connect="tcp::7333" executable="D:\sdks\Pico SDK v1.5.0\openocd\openocd.exe" warmup-ms="0" download-type="ALWAYS" reset-cmd="monitor reset" reset-type="AFTER_DOWNLOAD">
+      <debugger kind="GDB" isBundled="true" />
+    </custom-gdb-server>
+    <method v="2">
+      <option name="CLION.COMPOUND.BUILD" enabled="true" />
+    </method>
+  </configuration>
+</component>

@@ -3,6 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="C:/Program Files/Raspberry Pi/Pico SDK v1.5.0/pico-sdk" vcs="" />
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../../sdks/pimoroni-pico" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../sdks/pimoroni-pico" vcs="" />
   </component>
 </project>
