@@ -15,6 +15,11 @@
 #define DEBUG_LOG(...)
 #endif
 
+extern void setupDisplay();
+extern void displayCO2(int32_t);
+
+
+
 #define LED_QUICK_FLASH_DELAY_MS 100
 #define LED_SLOW_FLASH_DELAY_MS 1000
 #define ORG_BLUETOOTH_CHARACTERISTIC_CO2_CONCENTRATION (0x2B8C)
@@ -28,6 +33,7 @@ typedef enum {
     TC_W4_ENABLE_NOTIFICATIONS_COMPLETE,
     TC_W4_READY
 } gc_state_t;
+
 
 static btstack_packet_callback_registration_t hci_event_callback_registration;
 static gc_state_t state = TC_OFF;
@@ -144,14 +150,17 @@ static void handle_gatt_client_event([[maybe_unused]]uint8_t packet_type,[[maybe
                     uint16_t value_length = gatt_event_notification_get_value_length(packet);
                     const uint8_t *value = gatt_event_notification_get_value(packet);
                     DEBUG_LOG("Indication value len %d\n", value_length);
+                    int32_t co2_ppm = -0x7FFFFFFF;
                     if (value_length == 2) {
-                        uint32_t co2_ppm = little_endian_read_16(value, 0);
-                        printf("read co2 %li ppm\n", co2_ppm);
+                        co2_ppm = (int16_t)little_endian_read_16(value, 0);
                     } else if (value_length == 4) {
-                        uint32_t co2_ppm = little_endian_read_32(value, 0);
-                        printf("read co2 %li degc\n", co2_ppm);
+                        co2_ppm = (int32_t)little_endian_read_32(value, 0);
                     } else {
                         printf("Unexpected length %d\n", value_length);
+                    }
+                    if(co2_ppm != -0x7FFFFFFF) {
+                        printf("Read co2 %li ppm\n", co2_ppm);
+                        displayCO2(co2_ppm);
                     }
                     break;
                 }
@@ -248,7 +257,7 @@ static void heartbeat_handler(struct btstack_timer_source *ts) {
 
 int main() {
     stdio_init_all();
-
+    setupDisplay();
     // initialize CYW43 driver architecture (will enable BT if/because CYW43_ENABLE_BLUETOOTH == 1)
     if (cyw43_arch_init()) {
         printf("failed to initialise cyw43_arch\n");

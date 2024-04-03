@@ -28,15 +28,15 @@ add_subdirectory(${PIMORONI_PICO_PATH}/drivers ${CMAKE_CURRENT_BINARY_DIR}/pimor
 add_subdirectory(${PIMORONI_PICO_PATH}/libraries ${CMAKE_CURRENT_BINARY_DIR}/pimoroni-libraries)
 
 
-add_executable(${OUTPUT_NAME} src/ble-co2-display.cpp)
-#add_executable(${OUTPUT_NAME} demo.cpp)
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    pico_enable_stdio_uart(${OUTPUT_NAME} 0)
-    pico_enable_stdio_semihosting(${OUTPUT_NAME} 1)
-else()
+add_executable(${OUTPUT_NAME} src/ble-co2-display.cpp src/pimoroni-pico-display-2.cpp)
+
+#if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+#    pico_enable_stdio_uart(${OUTPUT_NAME} 0)
+#    pico_enable_stdio_semihosting(${OUTPUT_NAME} 1)
+#else()
     pico_enable_stdio_uart(${OUTPUT_NAME} 1)
     pico_enable_stdio_semihosting(${OUTPUT_NAME} 0)
-endif()
+#endif()
 
 target_include_directories(${OUTPUT_NAME} PRIVATE src)
 target_compile_definitions(${OUTPUT_NAME} PRIVATE RUNNING_AS_CLIENT=1)
