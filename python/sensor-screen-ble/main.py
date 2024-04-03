@@ -9,8 +9,18 @@ import uasyncio as asyncio
 import aioble
 import bluetooth
 
-import random
 import struct
+import machine
+
+# ############ Temperature
+sensor = machine.ADC(4)
+
+
+def read_temperature():
+    adc_value = sensor.read_u16()
+    volt = (3.3 / 65535) * adc_value
+    temperature = 27 - (volt - 0.706) / 0.001721
+    return round(temperature, 1)
 
 
 # ############ BLE
@@ -38,7 +48,6 @@ _ADV_INTERVAL_MS = 250_000
 
 # This would be periodically polling a hardware sensor.
 async def sensor_task():
-    t = 24.5
     j = 0
     highest = 0.0
     lowest = 4000.0
@@ -75,7 +84,7 @@ async def sensor_task():
             highest = e_co2
 
         # calculates a colour from the sensor reading
-        hue = max(0, HUE_START + ((e_co2 - MIN) * (HUE_END - HUE_START) / (MAX - MIN)))
+        hue = max(0, HUE_START + ((e_co2 - MIN) * (HUE_END - HUE_START) // (MAX - MIN)))
 
         # set the leds
         r, g, b = [int(255 * c) for c in hsv_to_rgb(hue / 360, 1.0, BRIGHTNESS)]
@@ -87,6 +96,7 @@ async def sensor_task():
         if len(readings) > WIDTH:
             readings.pop(0)
 
+        t = read_temperature()
         # draw the graph
         clear()
         for r in range(len(readings)):
@@ -102,11 +112,12 @@ async def sensor_task():
         text_width = display.measure_text(f"TVOC {tvoc:.0f}ppm", scale=1)
         display.text(f"TVOC {tvoc:.0f}ppm", WIDTH - text_width, 16, scale=1)
 
-        display.update()
+        text_width = display.measure_text(f"Temp {t:.1f} C", scale=1)
+        display.text(f"Temp {t:.1f} C", WIDTH // 2 - text_width, 16, scale=1)
 
+        display.update()
         temp_characteristic.write(_encode_temperature(t), send_update=True)
         co2_characteristic.write(_encode_co2(e_co2), send_update=True)
-        t += random.uniform(-0.5, 0.5)
 
         await asyncio.sleep_ms(1000)
 
@@ -129,6 +140,7 @@ async def peripheral_task():
 async def main():
     t1 = asyncio.create_task(sensor_task())
     t2 = asyncio.create_task(peripheral_task())
+    # noinspection PyCallingNonCallable
     await asyncio.gather(t1, t2, return_exceptions=True)
 
 
