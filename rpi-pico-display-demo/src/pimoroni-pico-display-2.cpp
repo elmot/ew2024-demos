@@ -20,6 +20,11 @@ static Pen BG = graphics.create_pen(120, 40, 60);
 static Pen WHITE = graphics.create_pen(255, 255, 255);
 static Pen TEXT = graphics.create_pen(50, 255, 155);
 
+static int32_t readings[DISPLAY_WIDTH];
+static int max_ppm = -10000;
+static int min_ppm = 1000001;
+
+
 void setupDisplay() {
     st7789.set_backlight(255);
     Point text_location(0, 0);
@@ -32,7 +37,9 @@ void setupDisplay() {
 
     // update screen
     st7789.update(&graphics);
-
+    for (int i = 0; i < DISPLAY_WIDTH; ++i) {
+        readings[i] = 400;
+    }
 }
 
 // the range of readings to map to colours (and scale our graph to)
@@ -45,16 +52,15 @@ constexpr float HUE_START = 100;// green
 constexpr float HUE_END = 0;    // red
 constexpr float BRIGHTNESS = 0.5;
 
-static struct {
-    int32_t data[DISPLAY_WIDTH];
-    size_t start_ptr;
-    size_t end_ptr;
-} readings = {.data{}, .start_ptr = 0, .end_ptr=0};
-int max_ppm = -10000;
-int min_ppm = 1000001;
-
 void displayCO2(int32_t co2_ppm) {
     static char buffer[40];
+
+    max_ppm = MAX(max_ppm, co2_ppm);
+    min_ppm = MIN(min_ppm, co2_ppm);
+    for (int i = DISPLAY_WIDTH - 1; i > 0; --i) {
+        readings[i] = readings[i - 1];
+    }
+    readings[0] = co2_ppm;
     graphics.set_pen(BG);
     graphics.clear();
 
@@ -64,22 +70,16 @@ void displayCO2(int32_t co2_ppm) {
     graphics.text(buffer, Point(0, 25), DISPLAY_WIDTH, 1.2, 0.3);
     float hue = MAX(0, HUE_START + ((co2_ppm - MIN) * (HUE_END - HUE_START) / (MAX - MIN)));
     led.set_hsv(hue / 360, 1.0, BRIGHTNESS);
-    readings.data[readings.end_ptr] = co2_ppm;
-    max_ppm = MAX(max_ppm, co2_ppm);
-    min_ppm = MIN(min_ppm, co2_ppm);
-    readings.end_ptr = (readings.end_ptr + 1) % DISPLAY_WIDTH;
-    if (readings.end_ptr == readings.start_ptr) {
-        readings.start_ptr = (readings.end_ptr + 1) % DISPLAY_WIDTH;
-    }
     graphics.set_pen(WHITE);
     Point b;
-    for (int i = (int) readings.start_ptr, x = 0; i != readings.end_ptr; i = (i + 1) % DISPLAY_WIDTH, ++x) {
-        auto v = (float) readings.data[(i + readings.start_ptr) % DISPLAY_WIDTH];
+    for (int x = 0; x < DISPLAY_WIDTH; ++x) {
         auto delta = max_ppm - min_ppm;
         if (delta == 0) delta = 10;
-        auto y = 42 + (DISPLAY_HEIGHT - 45) * ((float) max_ppm - v) / (float) delta;
+
+        auto v = (float) readings[x];
+        auto y = DISPLAY_HEIGHT - 2 - (DISPLAY_HEIGHT - 45) * (v - (float) min_ppm) / (float) delta;
         auto a = Point(x, (int) y);
-        if (i > 0) {
+        if (x > 0) {
             graphics.line(a, b);
         }
         b = a;
