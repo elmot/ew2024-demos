@@ -19,7 +19,7 @@ void line_fill(uint8_t r, uint8_t g, uint8_t b);
 void set_pixel(int x, uint8_t r, uint8_t g, uint8_t b);
 
 void flip_frame();
-
+void set_brightness(float);
 #ifdef __cplusplus
 }
 #endif

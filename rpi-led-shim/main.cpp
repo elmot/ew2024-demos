@@ -1,9 +1,9 @@
+#include <cmath>
 #include <cstdio>
 #include <fcntl.h>
 #include <cstdlib>
 #include <unistd.h>
 
-#include <sys/ioctl.h>
 #include "pimoroni-led-shim.h"
 
 #include <linux/i2c-dev.h>
@@ -28,26 +28,74 @@ void setupI2C(const char *name) {
 }
 
 
-int main() {
+typedef struct RGBColor {
+    int r;
+    int g;
+    int b;
+} RGBColor;
+
+RGBColor hsv2rgb(float H, float S, float V) {
+    float r, g, b;
+
+    float h = H / 360;
+    float s = S / 100;
+    float v = V / 100;
+
+    int i = floor(h * 6);
+    float f = h * 6 - i;
+    float p = v * (1 - s);
+    float q = v * (1 - f * s);
+    float t = v * (1 - (1 - f) * s);
+
+    switch (i % 6) {
+        case 0:
+            r = v, g = t, b = p;
+            break;
+        case 1:
+            r = q, g = v, b = p;
+            break;
+        case 2:
+            r = p, g = v, b = t;
+            break;
+        case 3:
+            r = p, g = q, b = v;
+            break;
+        case 4:
+            r = t, g = p, b = v;
+            break;
+        case 5:
+            r = v, g = p, b = q;
+            break;
+    }
+
+    RGBColor color;
+    color.r = r * 255;
+    color.g = g * 255;
+    color.b = b * 255;
+
+    return color;
+}
+
+[[noreturn]]int main() {
     setupI2C("/dev/i2c-1");
     IS31FL3731_Init();
     printf("Hello, LED World!\r\n");
-    for (int i = 0; true; i = (i + 1) % 28) {
+    set_brightness(0.8);
 
-        line_fill(0, 0, 0);
-        set_pixel(i, 255, 0, 0);
-        flip_frame();
-        usleep(5000);
+    float spacing = 360.0 / 16.0;
+    unsigned long hue = 0;
 
-        line_fill(0, 0, 0);
-        set_pixel(i, 0, 255, 0);
+    for (unsigned long cnt = 0; true; ++cnt) {
+        hue = (cnt * 100) % 360;
+        for (int x = 0; x < 28; ++x) {
+            int offset = x * spacing;
+            float h = ((hue + offset) % 360);
+            RGBColor color = hsv2rgb(h, 100, 100);
+            set_pixel(x, color.r, color.g, color.b);
+        }
         flip_frame();
-        usleep(5000);
-
-        line_fill(0, 0, 0);
-        set_pixel(i, 0, 0, 255);
-        flip_frame();
-        usleep(5000);
+        usleep(100000);
     }
-    return 0;
 }
+
+
