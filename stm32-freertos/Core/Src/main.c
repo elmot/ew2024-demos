@@ -69,21 +69,38 @@ const osThreadAttr_t defaultTask_attributes = {
 };
 /* Definitions for myJoystick */
 osThreadId_t myJoystickHandle;
-uint32_t myTask02Buffer[ 128 ];
-osStaticThreadDef_t myTask02ControlBlock;
+uint32_t myJoystickBuffer[ 128 ];
+osStaticThreadDef_t myJoystickControlBlock;
 const osThreadAttr_t myJoystick_attributes = {
   .name = "myJoystick",
-  .cb_mem = &myTask02ControlBlock,
-  .cb_size = sizeof(myTask02ControlBlock),
-  .stack_mem = &myTask02Buffer[0],
-  .stack_size = sizeof(myTask02Buffer),
+  .cb_mem = &myJoystickControlBlock,
+  .cb_size = sizeof(myJoystickControlBlock),
+  .stack_mem = &myJoystickBuffer[0],
+  .stack_size = sizeof(myJoystickBuffer),
   .priority = (osPriority_t) osPriorityLow,
 };
-/* Definitions for myLedTask */
-osThreadId_t myLedTaskHandle;
-const osThreadAttr_t myLedTask_attributes = {
-  .name = "myLedTask",
-  .stack_size = 128 * 4,
+/* Definitions for myLEDTask */
+osThreadId_t myLEDTaskHandle;
+uint32_t myLEDTaskBuffer[ 128 ];
+osStaticThreadDef_t myLEDTaskControlBlock;
+const osThreadAttr_t myLEDTask_attributes = {
+  .name = "myLEDTask",
+  .cb_mem = &myLEDTaskControlBlock,
+  .cb_size = sizeof(myLEDTaskControlBlock),
+  .stack_mem = &myLEDTaskBuffer[0],
+  .stack_size = sizeof(myLEDTaskBuffer),
+  .priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for myLCD */
+osThreadId_t myLCDHandle;
+uint32_t myLCDBuffer[ 228 ];
+osStaticThreadDef_t myLCDControlBlock;
+const osThreadAttr_t myLCD_attributes = {
+  .name = "myLCD",
+  .cb_mem = &myLCDControlBlock,
+  .cb_size = sizeof(myLCDControlBlock),
+  .stack_mem = &myLCDBuffer[0],
+  .stack_size = sizeof(myLCDBuffer),
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for myDisplayQ */
@@ -112,8 +129,9 @@ static void MX_SAI1_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_USART2_UART_Init(void);
 void StartDefaultTask(void *argument);
-void StartTask02(void *argument);
-void StartTask03(void *argument);
+extern void StartJoystick(void *argument);
+extern void StartLED(void *argument);
+extern void StartLCD(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -194,10 +212,13 @@ int main(void)
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
   /* creation of myJoystick */
-  myJoystickHandle = osThreadNew(StartTask02, NULL, &myJoystick_attributes);
+  myJoystickHandle = osThreadNew(StartJoystick, NULL, &myJoystick_attributes);
 
-  /* creation of myLedTask */
-  myLedTaskHandle = osThreadNew(StartTask03, NULL, &myLedTask_attributes);
+  /* creation of myLEDTask */
+  myLEDTaskHandle = osThreadNew(StartLED, NULL, &myLEDTask_attributes);
+
+  /* creation of myLCD */
+  myLCDHandle = osThreadNew(StartLCD, NULL, &myLCD_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -734,50 +755,6 @@ void StartDefaultTask(void *argument)
     osDelay(1);
   }
   /* USER CODE END 5 */
-}
-
-/* USER CODE BEGIN Header_StartTask02 */
-/**
-* @brief Function implementing the myJoystick thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartTask02 */
-void StartTask02(void *argument)
-{
-  /* USER CODE BEGIN StartTask02 */
-    uint8_t  LCDstr[7] = {0};
-
-    /* Clear the LCD device */
-
-    BSP_LCD_GLASS_Init();
-    BSP_LCD_GLASS_Clear();
-    BSP_LCD_GLASS_DisplayString("TEST01");
-
-    /* Infinite loop */
-  for(;;)
-  {
-    osDelay(50);
-  }
-  /* USER CODE END StartTask02 */
-}
-
-/* USER CODE BEGIN Header_StartTask03 */
-/**
-* @brief Function implementing the myLedTask thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartTask03 */
-void StartTask03(void *argument)
-{
-  /* USER CODE BEGIN StartTask03 */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END StartTask03 */
 }
 
 /**
