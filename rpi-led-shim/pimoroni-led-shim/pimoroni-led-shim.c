@@ -9,11 +9,6 @@ void set_brightness(float new_brightness) {
     brightness = new_brightness;
 }
 
-
-static inline void Delay_ms(unsigned int ms) {
-    usleep(ms * 1000);
-}
-
 static uint8_t colors[28 * 3];
 static uint8_t output[144];
 static const uint8_t all_led_on_IS31FL3731[18] = {

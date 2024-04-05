@@ -80,13 +80,13 @@ RGBColor hsv2rgb(float H, float S, float V) {
     setupI2C("/dev/i2c-1");
     IS31FL3731_Init();
     printf("Hello, LED World!\r\n");
-    set_brightness(0.8);
+    set_brightness(0.6);
 
     float spacing = 360.0 / 16.0;
     unsigned long hue = 0;
 
     for (unsigned long cnt = 0; true; ++cnt) {
-        hue = (cnt * 100) % 360;
+        hue = cnt % 360;
         for (int x = 0; x < 28; ++x) {
             int offset = x * spacing;
             float h = ((hue + offset) % 360);
@@ -94,7 +94,7 @@ RGBColor hsv2rgb(float H, float S, float V) {
             set_pixel(x, color.r, color.g, color.b);
         }
         flip_frame();
-        usleep(100000);
+        usleep(3000);
     }
 }
 
