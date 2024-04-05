@@ -53,7 +53,7 @@ include_directories(Core/Inc Drivers/STM32L4xx_HAL_Driver/Inc Drivers/STM32L4xx_
 
 add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32L476xx -DSTM32_THREAD_SAFE_STRATEGY=4)
 
-file(GLOB_RECURSE SOURCES "Core/*.*" "Middlewares/*.*" "Drivers/*.*")
+file(GLOB_RECURSE SOURCES "Core/*.*" "Middlewares/*.*" "Drivers/CMSIS/*.*" "Drivers/STM32L4xx_HAL_Driver/*.*")
 
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32L476VGTX_FLASH.ld)
 
@@ -61,7 +61,15 @@ add_link_options(-Wl,-gc-sections,--print-memory-usage,-Map=${PROJECT_BINARY_DIR
 add_link_options(-mcpu=cortex-m4 -mthumb -mthumb-interwork)
 add_link_options(-T ${LINKER_SCRIPT})
 
+add_library(stm32l476-discovery)
+target_include_directories(stm32l476-discovery PUBLIC ${CMAKE_SOURCE_DIR}/Drivers/BSP/STM32L476G-Discovery)
+target_sources(stm32l476-discovery PRIVATE
+        ${CMAKE_SOURCE_DIR}/Drivers/BSP/STM32L476G-Discovery/stm32l476g_discovery.c
+        ${CMAKE_SOURCE_DIR}/Drivers/BSP/STM32L476G-Discovery/stm32l476g_discovery_glass_lcd.c
+)
+
 add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
+target_link_libraries(${PROJECT_NAME}.elf stm32l476-discovery)
 
 set(HEX_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.hex)
 set(BIN_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bin)

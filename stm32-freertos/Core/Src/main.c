@@ -46,8 +46,6 @@ typedef StaticQueue_t osStaticMessageQDef_t;
 I2C_HandleTypeDef hi2c1;
 I2C_HandleTypeDef hi2c2;
 
-LCD_HandleTypeDef hlcd;
-
 QSPI_HandleTypeDef hqspi;
 
 SAI_HandleTypeDef hsai_BlockA1;
@@ -109,7 +107,6 @@ void PeriphCommonClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_I2C2_Init(void);
-static void MX_LCD_Init(void);
 static void MX_QUADSPI_Init(void);
 static void MX_SAI1_Init(void);
 static void MX_SPI2_Init(void);
@@ -161,7 +158,6 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_I2C2_Init();
-  MX_LCD_Init();
   MX_QUADSPI_Init();
   MX_SAI1_Init();
   MX_SPI2_Init();
@@ -401,44 +397,6 @@ static void MX_I2C2_Init(void)
   /* USER CODE BEGIN I2C2_Init 2 */
 
   /* USER CODE END I2C2_Init 2 */
-
-}
-
-/**
-  * @brief LCD Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_LCD_Init(void)
-{
-
-  /* USER CODE BEGIN LCD_Init 0 */
-
-  /* USER CODE END LCD_Init 0 */
-
-  /* USER CODE BEGIN LCD_Init 1 */
-
-  /* USER CODE END LCD_Init 1 */
-  hlcd.Instance = LCD;
-  hlcd.Init.Prescaler = LCD_PRESCALER_1;
-  hlcd.Init.Divider = LCD_DIVIDER_16;
-  hlcd.Init.Duty = LCD_DUTY_1_4;
-  hlcd.Init.Bias = LCD_BIAS_1_4;
-  hlcd.Init.VoltageSource = LCD_VOLTAGESOURCE_INTERNAL;
-  hlcd.Init.Contrast = LCD_CONTRASTLEVEL_0;
-  hlcd.Init.DeadTime = LCD_DEADTIME_0;
-  hlcd.Init.PulseOnDuration = LCD_PULSEONDURATION_0;
-  hlcd.Init.MuxSegment = LCD_MUXSEGMENT_DISABLE;
-  hlcd.Init.BlinkMode = LCD_BLINKMODE_OFF;
-  hlcd.Init.BlinkFrequency = LCD_BLINKFREQUENCY_DIV8;
-  hlcd.Init.HighDrive = LCD_HIGHDRIVE_DISABLE;
-  if (HAL_LCD_Init(&hlcd) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN LCD_Init 2 */
-
-  /* USER CODE END LCD_Init 2 */
 
 }
 
@@ -788,10 +746,18 @@ void StartDefaultTask(void *argument)
 void StartTask02(void *argument)
 {
   /* USER CODE BEGIN StartTask02 */
-  /* Infinite loop */
+    uint8_t  LCDstr[7] = {0};
+
+    /* Clear the LCD device */
+
+    BSP_LCD_GLASS_Init();
+    BSP_LCD_GLASS_Clear();
+    BSP_LCD_GLASS_DisplayString("TEST01");
+
+    /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    osDelay(50);
   }
   /* USER CODE END StartTask02 */
 }

@@ -31,6 +31,13 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stm32l476g_discovery.h"
+//#include "stm32l476g_discovery_audio.h"
+//#include "stm32l476g_discovery_compass.h"
+#include "stm32l476g_discovery_glass_lcd.h"
+//#include "stm32l476g_discovery_idd.h"
+//#include "stm32l476g_discovery_qspi.h"
+//#include "stm32l476g_discovery_gyroscope.h"
 
 /* USER CODE END Includes */
 
