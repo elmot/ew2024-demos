@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="rpi-led-shim-stripped" type="com.jetbrains.cidr.remote.gdbserver.type" factoryName="com.jetbrains.cidr.remote.gdbserver.factory" nameIsGenerated="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="rpi-led-shim" TARGET_NAME="rpi-led-shim-stripped" CONFIG_NAME="Debug" version="1" RUN_PATH="$PROJECT_DIR$/cmake-build-debug/rpi-led-shim-stripped.elf">
-    <custom-gdb-server version="1" gdb-connect="192.168.19.1:1234" executable="" warmup-ms="0" download-type="ALWAYS" sshConfigName="ew2024@192.168.19.1:22" uploadFile="/tmp/CLion/debug/rpi-led-shim-stripped.elf" defaultGdbServerArgs=":1234 /tmp/CLion/debug/rpi-led-shim-stripped.elf">
+    <custom-gdb-server version="1" gdb-connect="192.168.19.1:1234" executable="" warmup-ms="0" download-type="ALWAYS" sshConfigName="ew2024@192.168.19.1:22 agent" uploadFile="/tmp/CLion/debug/rpi-led-shim-stripped.elf" defaultGdbServerArgs=":1234 /tmp/CLion/debug/rpi-led-shim-stripped.elf">
       <debugger kind="GDB" isBundled="true" />
     </custom-gdb-server>
     <method v="2">

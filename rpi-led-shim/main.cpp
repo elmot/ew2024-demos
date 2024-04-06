@@ -76,7 +76,7 @@ RGBColor hsv2rgb(float H, float S, float V) {
     return color;
 }
 
-[[noreturn]]int main() {
+int main() {
     setupI2C("/dev/i2c-1");
     IS31FL3731_Init();
     printf("Hello, LED World!\r\n");

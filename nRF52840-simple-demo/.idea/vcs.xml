@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="VcsDirectoryMappings">
+    <mapping directory="$USER_HOME$/zephyrproject/bootloader/mcuboot" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/bsim_hw_models/nrf_hw_models" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/crypto/tinycrypt" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/debug/mipi-sys-t" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/debug/segger" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/altera" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/ambiq" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/atmel" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/cmsis" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/espressif" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/intel" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/libmetal" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/microchip" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/nordic" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/nuvoton" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/openisa" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/quicklogic" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/renesas" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/silabs" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/st" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/stm32" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/telink" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/ti" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/wurthelektronik" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/xtensa" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/lib/open-amp" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/lib/picolibc" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/zephyr" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
   </component>
 </project>
